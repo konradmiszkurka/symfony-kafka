@@ -8,4 +8,18 @@ framework:
             query.bus:
                 middleware:
                     - validation
-        # Transporty (Kafka) dodaje Faza 4.
+            event.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
+                middleware:
+                    - validation
+        transports:
+            kafka_events:
+                dsn: '%env(MESSENGER_KAFKA_EVENTS_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    topic: enrollment.events
+                    consumer_group: '%env(APP_ENV)%-enrollment-consumer'
+        # routing: UserEnrolled → kafka_events added in Task 3/4 once the class exists
+        # 'App\Enrollment\Domain\Event\UserEnrolled': kafka_events

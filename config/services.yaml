@@ -48,3 +48,10 @@ services:
     App\Shared\Infrastructure\Messenger\Kafka\KafkaTransportFactory:
         tags:
             - { name: messenger.transport_factory }
+
+    App\Shared\Infrastructure\Bus\MessengerEventBus:
+        arguments:
+            $eventBus: '@event.bus'
+
+    App\Shared\Application\Bus\EventBusInterface:
+        alias: App\Shared\Infrastructure\Bus\MessengerEventBus
