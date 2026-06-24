@@ -22,6 +22,7 @@ final class RegisterUserHandlerTest extends TestCase
             public function save(User $user): void { $this->saved[] = $user; }
             public function ofEmail(string $email): ?User { return null; }
             public function existsByEmail(string $email): bool { return false; }
+            public function ofId(\Symfony\Component\Uid\Uuid $id): ?User { return null; }
         };
         $hasher = new class implements PasswordHasher {
             public function hash(string $plainPassword): string { return 'hashed:'.$plainPassword; }
@@ -43,6 +44,7 @@ final class RegisterUserHandlerTest extends TestCase
             public function save(User $user): void {}
             public function ofEmail(string $email): ?User { return null; }
             public function existsByEmail(string $email): bool { return true; }
+            public function ofId(\Symfony\Component\Uid\Uuid $id): ?User { return null; }
         };
         $hasher = new class implements PasswordHasher {
             public function hash(string $plainPassword): string { return 'x'; }

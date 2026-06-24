@@ -7,6 +7,7 @@ namespace App\Identity\Infrastructure\Doctrine;
 use App\Identity\Domain\User;
 use App\Identity\Domain\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Uid\Uuid;
 
 final readonly class DoctrineUserRepository implements UserRepository
 {
@@ -28,5 +29,10 @@ final readonly class DoctrineUserRepository implements UserRepository
     public function existsByEmail(string $email): bool
     {
         return $this->em->getRepository(User::class)->count(['email' => $email]) > 0;
+    }
+
+    public function ofId(Uuid $id): ?User
+    {
+        return $this->em->find(User::class, $id);
     }
 }

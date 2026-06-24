@@ -67,3 +67,12 @@ services:
 
     App\Progress\Application\CourseStructureProvider:
         alias: App\Progress\Infrastructure\Catalog\CatalogCourseStructureProvider
+
+    App\Notification\Domain\SentNotificationRepository:
+        alias: App\Notification\Infrastructure\Doctrine\DoctrineSentNotificationRepository
+
+    App\Notification\Application\Mailer:
+        alias: App\Notification\Infrastructure\Symfony\SymfonyMailer
+
+    App\Notification\Application\RecipientResolver:
+        alias: App\Notification\Infrastructure\Identity\IdentityRecipientResolver
