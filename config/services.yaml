@@ -29,6 +29,13 @@ services:
     App\Shared\Application\Bus\CommandBusInterface:
         alias: App\Shared\Infrastructure\Bus\MessengerCommandBus
 
+    App\Shared\Infrastructure\Bus\MessengerQueryBus:
+        arguments:
+            $queryBus: '@query.bus'
+
+    App\Shared\Application\Bus\QueryBusInterface:
+        alias: App\Shared\Infrastructure\Bus\MessengerQueryBus
+
     App\Identity\Domain\UserRepository:
         alias: App\Identity\Infrastructure\Doctrine\DoctrineUserRepository
 
