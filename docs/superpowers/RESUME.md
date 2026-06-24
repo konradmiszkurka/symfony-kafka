@@ -5,7 +5,7 @@ Platforma szkoleniowa Symfony 7.4 + Kafka (modularny monolit, hexagonal + lekkie
 Tryb wykonania: **Subagent-Driven Development** (fresh subagent per task + review + merge per faza).
 **Reguła twarda: commity BEZ śladu AI** (żadnego `Co-Authored-By` ani „Generated with Claude Code").
 
-## ✅ MVP KOMPLETNE — wszystkie 5 faz na `main` (HEAD 94cc1d5). Pełny zestaw 45 testów zielonych.
+## ✅ MVP KOMPLETNE — wszystkie 5 faz na `main`. 45 testów zielonych. **Wypchnięte na GitHub** (origin: konradmiszkurka/symfony-kafka).
 
 ## Status faz
 - **Faza 1 (Fundament)** — ✅ na `main` (Docker, MySQL 8.4, Kafka KRaft, skeleton, busy, /health)
@@ -39,3 +39,16 @@ Tryb wykonania: **Subagent-Driven Development** (fresh subagent per task + revie
 ## Uruchomienie środowiska
 `docker compose up -d` → app :8080, Kafka UI :8081, Mailpit :8025. Komendy w kontenerze: `docker compose run --rm php <cmd>`.
 Konsumenci Kafki: `messenger:setup-transports failed` + `messenger:consume {progress_enrollment_in,notification_enrollment_in,notification_progress_in}` (patrz README).
+
+
+---
+
+## 📋 Backlog na jutro (opcjonalne — MVP działa bez tego)
+Kolejność wg „najszybszy widoczny efekt → twardsze hardening":
+1. **Wyświetlić % ukończenia w UI** — `CourseProgress::completionPercentage()` już istnieje i jest przetestowane; brakuje renderu na stronie kursu (np. `templates/catalog/detail.html.twig` lub osobny widok „moje postępy"). Najszybszy, widoczny efekt.
+2. **MAILER from-address do configu** — `SymfonyMailer` ma zahardcodowane `from('platforma@example.com')`; przenieść do env/`framework.mailer.envelope.sender`.
+3. **Testy jednostkowe KafkaTransport bez brokera** — `ack()` rzuca przy braku stampa, guardy `topic`/`consumer_group`, mapowanie nagłówków w `send()`. Round-trip pokryty smoke-testem grupy `kafka`.
+4. **CSRF na formularzu „Opublikuj"** (Faza 3, `templates/instructor/manage_course.html.twig`) — chroniony rolą ROLE_INSTRUCTOR, więc Minor; dla spójności dodać token jak przy enroll/complete.
+5. **(post-MVP) Transactional outbox** — domknięcie at-least-once luk save→publish / send→save (świadomie udokumentowane jako trade-off).
+
+Tryb pracy bez zmian: Subagent-Driven, **commity bez śladu AI**. Każdy follow-up = mały plan/task → review → merge.
