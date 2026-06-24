@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block body %}
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+    {% for section in course.sections %}
+        <h2>{{ section.title }}</h2>
+        <ol>
+        {% for lesson in section.lessons %}
+            <li>{{ lesson.title }}</li>
+        {% endfor %}
+        </ol>
+    {% endfor %}
+{% endblock %}

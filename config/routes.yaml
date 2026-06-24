@@ -15,3 +15,9 @@ identity_controllers:
         path: ../src/Identity/UI/Controller/
         namespace: App\Identity\UI\Controller
     type: attribute
+
+catalog_controllers:
+    resource:
+        path: ../src/Catalog/UI/Controller/
+        namespace: App\Catalog\UI\Controller
+    type: attribute
