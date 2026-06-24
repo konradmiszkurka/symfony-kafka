@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel{% endblock %}
+
+{% block body %}
+    <h1>Panel</h1>
+    <p>Zalogowano jako: {{ app.user.userIdentifier }}</p>
+    <p>Role: {{ app.user.roles|join(', ') }}</p>
+    <a href="{{ path('logout') }}">Wyloguj</a>
+{% endblock %}

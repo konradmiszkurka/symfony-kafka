@@ -28,7 +28,7 @@ final class RegistrationController extends AbstractController
             try {
                 $commandBus->dispatch(new RegisterUserCommand($data->email, $data->plainPassword, $data->role));
 
-                return $this->redirect('/login');
+                return $this->redirectToRoute('login');
             } catch (EmailAlreadyInUseException $e) {
                 $form->get('email')->addError(new FormError($e->getMessage()));
             }
