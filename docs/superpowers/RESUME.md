@@ -5,12 +5,14 @@ Platforma szkoleniowa Symfony 7.4 + Kafka (modularny monolit, hexagonal + lekkie
 Tryb wykonania: **Subagent-Driven Development** (fresh subagent per task + review + merge per faza).
 **Reguła twarda: commity BEZ śladu AI** (żadnego `Co-Authored-By` ani „Generated with Claude Code").
 
+## ✅ MVP KOMPLETNE — wszystkie 5 faz na `main` (HEAD 94cc1d5). Pełny zestaw 45 testów zielonych.
+
 ## Status faz
 - **Faza 1 (Fundament)** — ✅ na `main` (Docker, MySQL 8.4, Kafka KRaft, skeleton, busy, /health)
 - **Faza 2 (Identity)** — ✅ na `main` (rejestracja, login, role STUDENT/INSTRUCTOR, /dashboard)
 - **Faza 3 (Catalog)** — ✅ na `main` (agregat Course→Section→Lesson, CRUD instruktora, przeglądanie)
 - **Faza 4 (Enrollment + producent Kafki)** — ✅ na `main` (własny transport Kafka, zapis na kurs → UserEnrolled)
-- **Faza 5 (Progress + Notification konsumenci)** — ⏳ **GOTOWA NA GAŁĘZI, NIEZMERGOWANA**
+- **Faza 5 (Progress + Notification konsumenci)** — ✅ na `main` (konsumenci Kafki, postępy, maile)
 
 ## DOKŁADNY następny krok (po restarcie)
 1. `main` jest na `d3566d6` (Fazy 1-4 + wszystkie plany/specy).
