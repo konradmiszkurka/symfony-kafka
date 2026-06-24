@@ -9,3 +9,9 @@
 
 controllers:
     resource: routing.controllers
+
+identity_controllers:
+    resource:
+        path: ../src/Identity/UI/Controller/
+        namespace: App\Identity\UI\Controller
+    type: attribute
