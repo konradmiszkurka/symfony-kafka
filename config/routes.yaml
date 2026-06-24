@@ -21,3 +21,9 @@ catalog_controllers:
         path: ../src/Catalog/UI/Controller/
         namespace: App\Catalog\UI\Controller
     type: attribute
+
+enrollment_controllers:
+    resource:
+        path: ../src/Enrollment/UI/Controller/
+        namespace: App\Enrollment\UI\Controller
+    type: attribute

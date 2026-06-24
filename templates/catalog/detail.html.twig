@@ -1,6 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ course.title }}{% endblock %}
 {% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}<div class="alert {{ label }}">{{ message }}</div>{% endfor %}
+    {% endfor %}
+
     <h1>{{ course.title }}</h1>
     <p>{{ course.description }}</p>
     {% for section in course.sections %}
@@ -11,4 +15,13 @@
         {% endfor %}
         </ol>
     {% endfor %}
+
+    {% if is_granted('ROLE_USER') %}
+        <form method="post" action="{{ path('enroll', {id: course.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('enroll-' ~ course.id) }}">
+            <button type="submit">Zapisz się</button>
+        </form>
+    {% else %}
+        <p><a href="{{ path('login') }}">Zaloguj się, aby zapisać się na kurs</a></p>
+    {% endif %}
 {% endblock %}

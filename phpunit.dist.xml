@@ -39,6 +39,12 @@
         </deprecationTrigger>
     </source>
 
+    <groups>
+        <exclude>
+            <group>kafka</group>
+        </exclude>
+    </groups>
+
     <extensions>
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
