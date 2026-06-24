@@ -1,6 +1,7 @@
 framework:
     messenger:
         default_bus: command.bus
+        failure_transport: failed
         buses:
             command.bus:
                 middleware:
@@ -21,5 +22,36 @@ framework:
                 options:
                     topic: enrollment.events
                     consumer_group: '%env(APP_ENV)%-enrollment-consumer'
+            kafka_progress:
+                dsn: '%env(MESSENGER_KAFKA_EVENTS_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    topic: progress.events
+                    consumer_group: '%env(APP_ENV)%-progress-producer'
+            progress_enrollment_in:
+                dsn: '%env(MESSENGER_KAFKA_EVENTS_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    topic: enrollment.events
+                    consumer_group: '%env(APP_ENV)%-progress'
+                retry_strategy: { max_retries: 3, delay: 1000, multiplier: 2 }
+            notification_enrollment_in:
+                dsn: '%env(MESSENGER_KAFKA_EVENTS_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    topic: enrollment.events
+                    consumer_group: '%env(APP_ENV)%-notification'
+                retry_strategy: { max_retries: 3, delay: 1000, multiplier: 2 }
+            notification_progress_in:
+                dsn: '%env(MESSENGER_KAFKA_EVENTS_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    topic: progress.events
+                    consumer_group: '%env(APP_ENV)%-notification-progress'
+                retry_strategy: { max_retries: 3, delay: 1000, multiplier: 2 }
+            failed: 'doctrine://default?queue_name=failed'
         routing:
             'App\Enrollment\Domain\Event\UserEnrolled': kafka_events
+            # Uncomment in Task 2 once the Progress domain event classes are created:
+            # 'App\Progress\Domain\Event\LessonCompleted': kafka_progress
+            # 'App\Progress\Domain\Event\CourseCompleted': kafka_progress
