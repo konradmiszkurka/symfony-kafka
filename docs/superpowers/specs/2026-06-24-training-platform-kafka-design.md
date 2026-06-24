@@ -121,7 +121,7 @@ Publikacja na Kafkę następuje **po** commicie transakcji bazodanowej (żeby ni
 ## 6. Strategia testów (piramida)
 
 - **Unit** — czysta domena (encje, value objects, logika liczenia postępu, reguły zapisu). Bez infry, najwięcej testów.
-- **Integration** — command/query handlery z transportem Messenger `in-memory` (sync, bez prawdziwej Kafki → szybkie i deterministyczne). Repozytoria testowane przeciw realnej bazie (Postgres testowy) lub SQLite, do ustalenia w planie.
+- **Integration** — command/query handlery z transportem Messenger `in-memory` (sync, bez prawdziwej Kafki → szybkie i deterministyczne). Repozytoria testowane przeciw realnej bazie (MySQL testowy) lub SQLite, do ustalenia w planie.
 - **Functional** — kontrolery (API + Twig) przez `WebTestCase`: rejestracja, login, zapis, ukończenie lekcji.
 - **Smoke (opcjonalny)** — jeden test end-to-end przeciw realnej Kafce z Docker Compose, weryfikujący publish→consume. Reszta testów nie dotyka realnej Kafki.
 
@@ -138,7 +138,7 @@ Publikacja na Kafkę następuje **po** commicie transakcji bazodanowej (żeby ni
 
 ### Docker Compose (środowisko deweloperskie)
 - `php` (php-fpm 8.4 z rozszerzeniem rdkafka) + `nginx`
-- `postgres` — baza danych
+- `mysql` — baza danych (MySQL 8.4)
 - `kafka` — **tryb KRaft** (bez Zookeepera)
 - `kafka-ui` — podgląd topiców, partycji, consumer groups, offsetów
 - `mailpit` — podgląd wysłanych maili w dev
@@ -174,4 +174,4 @@ tests/
 - [ ] `CourseCompleted` → mail z gratulacjami
 - [ ] Konsumenci idempotentni; nieudane wiadomości trafiają na dead-letter
 - [ ] Piramida testów (unit/integration/functional) przechodzi; CI uruchamia testy
-- [ ] `docker compose up` stawia całe środowisko (Symfony + Postgres + Kafka + Kafka UI + Mailpit)
+- [ ] `docker compose up` stawia całe środowisko (Symfony + MySQL + Kafka + Kafka UI + Mailpit)

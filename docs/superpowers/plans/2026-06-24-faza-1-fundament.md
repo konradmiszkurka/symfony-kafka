@@ -6,13 +6,15 @@
 
 **Architecture:** Modularny monolit Symfony 7.x (PHP 8.4) uruchamiany w kontenerach. PHP/Composer/konsola/testy działają WYŁĄCZNIE wewnątrz kontenera `php` (na hoście nie ma PHP). Struktura `src/<Moduł>/{Domain,Application,Infrastructure,UI}` przygotowana pod kolejne fazy. Kafka działa, ale w tej fazie nieużywana przez aplikację (konfigurację transportu dodaje Faza 4).
 
-**Tech Stack:** PHP 8.4 (fpm-alpine) + ext-rdkafka/intl/pdo_pgsql, Symfony 7.x, Doctrine ORM, Symfony Messenger, Twig, PHPUnit, Docker Compose, PostgreSQL 16, Apache Kafka (KRaft), kafbat Kafka UI, Mailpit.
+**Tech Stack:** PHP 8.4 (fpm-alpine) + ext-rdkafka/intl/pdo_mysql, Symfony 7.x, Doctrine ORM, Symfony Messenger, Twig, PHPUnit, Docker Compose, MySQL 8.4, Apache Kafka (KRaft), kafbat Kafka UI, Mailpit.
+
+> **Zmiana bazy (2026-06-24):** projekt przeszedł z PostgreSQL na **MySQL 8.4** na życzenie użytkownika (komfort/znajomość). Wybór bazy jest niezależny od Kafki — eventy publikuje aplikacja przez Messenger, nie baza. Historyczne bloki kodu poniżej (Task 1/3) wspominają jeszcze Postgresa; obowiązujący stan to MySQL (patrz commity i ledger).
 
 ## Global Constraints
 
 - PHP **8.4**, Symfony **7.x** — wersje minimalne, nie obniżać.
 - Wszystkie komendy PHP/Composer/console/PHPUnit uruchamiane w kontenerze: `docker compose exec php <cmd>` (lub `docker compose run --rm php <cmd>` gdy kontener nie działa).
-- Baza: **PostgreSQL** (nie MySQL/SQLite w środowisku dev).
+- Baza: **MySQL 8.4** (nie Postgres/SQLite w środowisku dev).
 - Kafka w trybie **KRaft** (bez Zookeepera).
 - Struktura kodu: `src/<BoundedContext>/{Domain,Application,Infrastructure,UI}`. Namespace PSR-4: `App\<BoundedContext>\...`.
 - Domena nie zależy od frameworka — w tej fazie nie dotyczy jeszcze kodu domenowego, ale strukturę utrzymujemy.
