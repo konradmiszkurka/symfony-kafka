@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block body %}
+    <h1>{{ course.title }} ({{ course.status.value }})</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}<div class="alert {{ label }}">{{ message }}</div>{% endfor %}
+    {% endfor %}
+
+    {% for section in course.sections %}
+        <h2>{{ section.title }}</h2>
+        <ol>{% for lesson in section.lessons %}<li>{{ lesson.title }}</li>{% endfor %}</ol>
+    {% endfor %}
+
+    <h3>Dodaj sekcję</h3>
+    {{ form_start(sectionForm, {action: path('instructor_course_add_section', {id: course.id}), method: 'post'}) }}
+        {{ form_widget(sectionForm) }}
+        <button type="submit">Dodaj sekcję</button>
+    {{ form_end(sectionForm) }}
+
+    <h3>Dodaj lekcję</h3>
+    {{ form_start(lessonForm, {action: path('instructor_course_add_lesson', {id: course.id}), method: 'post'}) }}
+        {{ form_widget(lessonForm) }}
+        <button type="submit">Dodaj lekcję</button>
+    {{ form_end(lessonForm) }}
+
+    <form method="post" action="{{ path('instructor_course_publish', {id: course.id}) }}">
+        <button type="submit" id="publish">Opublikuj kurs</button>
+    </form>
+{% endblock %}

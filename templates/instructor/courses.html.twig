@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}Moje kursy{% endblock %}
+{% block body %}
+    <h1>Moje kursy</h1>
+    <a href="{{ path('instructor_course_new') }}">Nowy kurs</a>
+    <ul>
+    {% for course in courses %}
+        <li><a href="{{ path('instructor_course_manage', {id: course.id}) }}">{{ course.title }}</a> — {{ course.status.value }}</li>
+    {% else %}
+        <li>Brak kursów.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

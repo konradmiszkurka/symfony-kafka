@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nowy kurs{% endblock %}
+{% block body %}
+    <h1>Nowy kurs</h1>
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        <button type="submit">Utwórz</button>
+    {{ form_end(form) }}
+{% endblock %}

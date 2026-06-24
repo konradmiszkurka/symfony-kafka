@@ -24,6 +24,7 @@ security:
                 path: logout
 
     access_control:
+        - { path: ^/instructor, roles: ROLE_INSTRUCTOR }
         - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
