@@ -44,3 +44,7 @@ services:
 
     App\Catalog\Domain\CourseRepository:
         alias: App\Catalog\Infrastructure\Doctrine\DoctrineCourseRepository
+
+    App\Shared\Infrastructure\Messenger\Kafka\KafkaTransportFactory:
+        tags:
+            - { name: messenger.transport_factory }
