@@ -28,3 +28,11 @@ services:
 
     App\Shared\Application\Bus\CommandBusInterface:
         alias: App\Shared\Infrastructure\Bus\MessengerCommandBus
+        # public: dopóki nie jest wstrzykiwany w kontrolerach (Task 4/5) — potrzebny do pobrania w testach
+        public: true
+
+    App\Identity\Domain\UserRepository:
+        alias: App\Identity\Infrastructure\Doctrine\DoctrineUserRepository
+
+    App\Identity\Application\PasswordHasher:
+        alias: App\Identity\Infrastructure\Security\SymfonyPasswordHasher
