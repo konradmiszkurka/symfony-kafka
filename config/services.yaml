@@ -55,3 +55,9 @@ services:
 
     App\Shared\Application\Bus\EventBusInterface:
         alias: App\Shared\Infrastructure\Bus\MessengerEventBus
+
+    App\Enrollment\Domain\EnrollmentRepository:
+        alias: App\Enrollment\Infrastructure\Doctrine\DoctrineEnrollmentRepository
+
+    App\Enrollment\Application\CourseAvailabilityChecker:
+        alias: App\Enrollment\Infrastructure\Catalog\CatalogCourseAvailabilityChecker
