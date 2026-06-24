@@ -11,7 +11,14 @@
         <h2>{{ section.title }}</h2>
         <ol>
         {% for lesson in section.lessons %}
-            <li>{{ lesson.title }}</li>
+            <li>{{ lesson.title }}
+                {% if is_granted('ROLE_USER') %}
+                    <form method="post" action="{{ path('progress_mark_lesson', {courseId: course.id, lessonId: lesson.id}) }}" style="display:inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('complete-' ~ lesson.id) }}">
+                        <button type="submit">Ukończ</button>
+                    </form>
+                {% endif %}
+            </li>
         {% endfor %}
         </ol>
     {% endfor %}

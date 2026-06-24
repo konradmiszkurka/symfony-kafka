@@ -27,3 +27,9 @@ enrollment_controllers:
         path: ../src/Enrollment/UI/Controller/
         namespace: App\Enrollment\UI\Controller
     type: attribute
+
+progress_controllers:
+    resource:
+        path: ../src/Progress/UI/Controller/
+        namespace: App\Progress\UI\Controller
+    type: attribute

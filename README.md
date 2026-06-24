@@ -30,3 +30,14 @@ docker compose exec php composer <cmd>        # composer
 
 ## Struktura
 `src/<Moduł>/{Domain,Application,Infrastructure,UI}` — moduły: Identity, Catalog, Enrollment, Progress, Notification, Shared.
+
+## Konsumenci Kafki (event-driven)
+Eventy są publikowane na Kafkę; konsumenci to procesy Messengera (osobne consumer groups):
+```bash
+docker compose run --rm php bin/console messenger:setup-transports failed   # raz, dead-letter
+docker compose exec php bin/console messenger:consume progress_enrollment_in -vv      # inicjalizacja postępu
+docker compose exec php bin/console messenger:consume notification_enrollment_in -vv  # mail powitalny
+docker compose exec php bin/console messenger:consume notification_progress_in -vv    # mail gratulacyjny
+```
+Maile widać w Mailpit (http://localhost:8025), eventy w Kafka UI (http://localhost:8081).
+Nieudane wiadomości: `bin/console messenger:failed:show`.
