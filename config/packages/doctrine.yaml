@@ -24,6 +24,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Catalog/Domain'
                 prefix: 'App\Catalog\Domain'
                 alias: Catalog
+            Enrollment:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Enrollment/Domain'
+                prefix: 'App\Enrollment\Domain'
+                alias: Enrollment
 
 when@test:
     doctrine:
