@@ -10,8 +10,6 @@ doctrine:
     orm:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
-        identity_generation_preferences:
-            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
             App:
@@ -24,8 +22,8 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-            # database name is set explicitly in .env.test DATABASE_URL
-            dbname_suffix: ''
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
     doctrine:

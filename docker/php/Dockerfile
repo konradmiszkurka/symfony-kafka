@@ -4,11 +4,10 @@ FROM php:8.4-fpm-alpine
 RUN apk add --no-cache \
         librdkafka-dev \
         icu-dev \
-        postgresql-dev \
         git \
         unzip \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && docker-php-ext-install intl pdo_pgsql opcache \
+    && docker-php-ext-install intl pdo_mysql opcache \
     && pecl install rdkafka \
     && docker-php-ext-enable rdkafka \
     && apk del .build-deps
