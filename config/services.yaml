@@ -41,3 +41,6 @@ services:
 
     App\Identity\Application\PasswordHasher:
         alias: App\Identity\Infrastructure\Security\SymfonyPasswordHasher
+
+    App\Catalog\Domain\CourseRepository:
+        alias: App\Catalog\Infrastructure\Doctrine\DoctrineCourseRepository
