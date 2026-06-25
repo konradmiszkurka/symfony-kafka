@@ -8,6 +8,6 @@ use Symfony\Component\Uid\Uuid;
 
 interface CourseStructureProvider
 {
-    /** @return list<string> identyfikatory lekcji kursu */
+    /** @return list<string> the course's lesson ids */
     public function lessonIds(Uuid $courseId): array;
 }
