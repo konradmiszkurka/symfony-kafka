@@ -49,6 +49,11 @@ Kolejność wg „najszybszy widoczny efekt → twardsze hardening":
 2. ~~**MAILER from-address do configu**~~ ✅ ZROBIONE (303da45) — `SymfonyMailer` ma zahardcodowane `from('platforma@example.com')`; przenieść do env/`framework.mailer.envelope.sender`.
 3. ~~**Testy jednostkowe KafkaTransport bez brokera**~~ ✅ ZROBIONE (8e37ff0) — `ack()` rzuca przy braku stampa, guardy `topic`/`consumer_group`, mapowanie nagłówków w `send()`. Round-trip pokryty smoke-testem grupy `kafka`.
 4. ~~**CSRF na formularzu „Opublikuj"**~~ ✅ ZROBIONE (4f06756) (Faza 3, `templates/instructor/manage_course.html.twig`) — chroniony rolą ROLE_INSTRUCTOR, więc Minor; dla spójności dodać token jak przy enroll/complete.
-5. **(post-MVP) Transactional outbox** — domknięcie at-least-once luk save→publish / send→save (świadomie udokumentowane jako trade-off).
+5. ~~**(post-MVP) Transactional outbox**~~ ZROBIONE (774e6b6) — domknięcie at-least-once luk save→publish / send→save (świadomie udokumentowane jako trade-off).
 
 Tryb pracy bez zmian: Subagent-Driven, **commity bez śladu AI**. Każdy follow-up = mały plan/task → review → merge.
+
+## Po outboxie — pozostałe nice-to-have (opcjonalne)
+- Outbox operability: graceful shutdown workera (sygnały) + opcja `--sleep` w `app:outbox:relay`; monitoring zalegających wierszy (sent_at IS NULL i stare).
+- `.env.test` dummy secret — oznaczyć w GitGuardian jako false-positive (fixture testowy) lub zgenerycznić wartość.
+- Wielo-instancyjny relay (SELECT ... FOR UPDATE SKIP LOCKED) — gdy pojawi się potrzeba skali.
