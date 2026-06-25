@@ -29,5 +29,6 @@ final class NotificationIntegrationTest extends KernelTestCase
         $handler($event); // dedupe — drugi raz nie wysyła
 
         self::assertEmailCount(1);
+        self::assertEmailAddressContains(self::getMailerMessages()[0], 'From', 'platforma@example.com');
     }
 }

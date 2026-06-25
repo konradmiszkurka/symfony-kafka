@@ -10,14 +10,14 @@ use Symfony\Component\Mime\Email;
 
 final readonly class SymfonyMailer implements Mailer
 {
-    public function __construct(private MailerInterface $mailer)
+    public function __construct(private MailerInterface $mailer, private string $fromAddress)
     {
     }
 
     public function send(string $to, string $subject, string $body): void
     {
         $this->mailer->send(
-            (new Email())->from('platforma@example.com')->to($to)->subject($subject)->text($body)
+            (new Email())->from($this->fromAddress)->to($to)->subject($subject)->text($body)
         );
     }
 }

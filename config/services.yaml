@@ -71,6 +71,10 @@ services:
     App\Notification\Domain\SentNotificationRepository:
         alias: App\Notification\Infrastructure\Doctrine\DoctrineSentNotificationRepository
 
+    App\Notification\Infrastructure\Symfony\SymfonyMailer:
+        arguments:
+            $fromAddress: '%env(MAILER_FROM)%'
+
     App\Notification\Application\Mailer:
         alias: App\Notification\Infrastructure\Symfony\SymfonyMailer
 
