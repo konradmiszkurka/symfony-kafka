@@ -45,7 +45,7 @@ Konsumenci Kafki: `messenger:setup-transports failed` + `messenger:consume {prog
 
 ## 📋 Backlog na jutro (opcjonalne — MVP działa bez tego)
 Kolejność wg „najszybszy widoczny efekt → twardsze hardening":
-1. **Wyświetlić % ukończenia w UI** — `CourseProgress::completionPercentage()` już istnieje i jest przetestowane; brakuje renderu na stronie kursu (np. `templates/catalog/detail.html.twig` lub osobny widok „moje postępy"). Najszybszy, widoczny efekt.
+1. ~~**Wyświetlić % ukończenia w UI**~~ ✅ ZROBIONE (commit 7c8ca48) — `CourseProgress::completionPercentage()` już istnieje i jest przetestowane; brakuje renderu na stronie kursu (np. `templates/catalog/detail.html.twig` lub osobny widok „moje postępy"). Najszybszy, widoczny efekt.
 2. **MAILER from-address do configu** — `SymfonyMailer` ma zahardcodowane `from('platforma@example.com')`; przenieść do env/`framework.mailer.envelope.sender`.
 3. **Testy jednostkowe KafkaTransport bez brokera** — `ack()` rzuca przy braku stampa, guardy `topic`/`consumer_group`, mapowanie nagłówków w `send()`. Round-trip pokryty smoke-testem grupy `kafka`.
 4. **CSRF na formularzu „Opublikuj"** (Faza 3, `templates/instructor/manage_course.html.twig`) — chroniony rolą ROLE_INSTRUCTOR, więc Minor; dla spójności dodać token jak przy enroll/complete.
