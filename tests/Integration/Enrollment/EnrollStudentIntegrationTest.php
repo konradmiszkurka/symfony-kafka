@@ -25,9 +25,9 @@ final class EnrollStudentIntegrationTest extends KernelTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lekcja', 'treść'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lesson', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         return $courseId;
@@ -42,13 +42,13 @@ final class EnrollStudentIntegrationTest extends KernelTestCase
 
         $bus->dispatch(new EnrollStudentCommand($userId, $courseId));
 
-        // Persystencja: zapis trafił do bazy.
+        // Persistence: record was saved to the database.
         $enrollments = self::getContainer()->get(EnrollmentRepository::class);
         self::assertTrue($enrollments->exists($userId, $courseId));
 
         $unsent = self::getContainer()->get(OutboxRepository::class)->unsent(100);
         $match = array_values(array_filter($unsent, static fn ($m) => UserEnrolled::class === $m->getMessageType()));
-        self::assertNotEmpty($match, 'Brak eventu UserEnrolled w outboxie.');
+        self::assertNotEmpty($match, 'No UserEnrolled event in the outbox.');
         $payload = json_decode($match[0]->getPayload(), true, flags: JSON_THROW_ON_ERROR);
         self::assertSame((string) $userId, $payload['userId']);
         self::assertSame((string) $courseId, $payload['courseId']);
@@ -72,7 +72,7 @@ final class EnrollStudentIntegrationTest extends KernelTestCase
         self::bootKernel();
         $bus = self::getContainer()->get(CommandBusInterface::class);
         $draftId = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($draftId, Uuid::v4(), 'Roboczy', 'Opis'));
+        $bus->dispatch(new CreateCourseCommand($draftId, Uuid::v4(), 'Draft', 'Description'));
 
         $this->expectException(CourseNotEnrollableException::class);
         $bus->dispatch(new EnrollStudentCommand(Uuid::v4(), $draftId));

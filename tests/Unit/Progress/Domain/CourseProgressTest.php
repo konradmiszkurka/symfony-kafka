@@ -19,7 +19,7 @@ final class CourseProgressTest extends TestCase
         $l1 = Uuid::v4();
         self::assertTrue($progress->markLessonCompleted($l1));
         self::assertSame(50, $progress->completionPercentage());
-        // idempotencja: ta sama lekcja nie liczy się drugi raz
+        // idempotency: the same lesson does not count a second time
         self::assertFalse($progress->markLessonCompleted($l1));
         self::assertSame(50, $progress->completionPercentage());
 

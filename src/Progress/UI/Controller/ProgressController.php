@@ -26,19 +26,19 @@ final class ProgressController extends AbstractController
             throw $this->createNotFoundException();
         }
         if (!$this->isCsrfTokenValid('complete-'.$lessonId, (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Nieprawidłowy token CSRF.');
+            $this->addFlash('error', 'Invalid CSRF token.');
 
             return $this->redirectToRoute('catalog_detail', ['id' => $courseId]);
         }
 
         $user = $this->getUser();
         if (!$user instanceof User) {
-            throw new \LogicException('Oczekiwano zalogowanego użytkownika.');
+            throw new \LogicException('Expected a logged-in user.');
         }
 
         try {
             $commandBus->dispatch(new MarkLessonCompletedCommand($user->getId(), Uuid::fromString($courseId), Uuid::fromString($lessonId)));
-            $this->addFlash('success', 'Lekcja oznaczona jako ukończona.');
+            $this->addFlash('success', 'Lesson marked as completed.');
         } catch (ProgressNotFoundException|LessonNotInCourseException $e) {
             $this->addFlash('error', $e->getMessage());
         }

@@ -35,15 +35,15 @@ final class KafkaTransport implements TransportInterface
 
         $producer = $this->producer();
         $topic = $producer->newTopic($this->topic());
-        // Klucz partycji = null: brak powinowactwa partycji (Kafka rozkłada round-robin).
-        // Dla porządkowania per-agregat można w przyszłości przekazać klucz (np. userId)
-        // przez dedykowany stamp i podać go jako 4. argument producev().
+        // Partition key = null: no partition affinity (Kafka distributes round-robin).
+        // For per-aggregate ordering, a key (e.g. userId) can be passed in the future
+        // via a dedicated stamp and supplied as the 4th argument to producev().
         $topic->producev(RD_KAFKA_PARTITION_UA, 0, $encoded['body'], null, $headers);
         $producer->poll(0);
 
         $result = $producer->flush($this->options['flush_timeout_ms'] ?? 10000);
         if (RD_KAFKA_RESP_ERR_NO_ERROR !== $result) {
-            throw new TransportException('Nie udało się wysłać wiadomości do Kafki (flush).');
+            throw new TransportException('Failed to flush message to Kafka.');
         }
 
         return $envelope;
@@ -73,7 +73,7 @@ final class KafkaTransport implements TransportInterface
     {
         $stamp = $envelope->last(KafkaMessageStamp::class);
         if (!$stamp instanceof KafkaMessageStamp) {
-            throw new TransportException('Brak KafkaMessageStamp przy ack() — nie można scommitować offsetu.');
+            throw new TransportException('Missing KafkaMessageStamp on ack() — cannot commit offset.');
         }
 
         $this->consumer()->commit($stamp->message);
@@ -81,12 +81,12 @@ final class KafkaTransport implements TransportInterface
 
     public function reject(Envelope $envelope): void
     {
-        // At-least-once: brak commitu => wiadomość zostanie dostarczona ponownie.
+        // At-least-once: no commit => message will be redelivered.
     }
 
     private function topic(): string
     {
-        return $this->options['topic'] ?? throw new TransportException('Brak opcji "topic" dla transportu Kafka.');
+        return $this->options['topic'] ?? throw new TransportException('Missing "topic" option for Kafka transport.');
     }
 
     private function producer(): \RdKafka\Producer
@@ -106,7 +106,7 @@ final class KafkaTransport implements TransportInterface
             $conf = new \RdKafka\Conf();
             $conf->set('bootstrap.servers', $this->brokers);
             $conf->set('group.id', $this->options['consumer_group']
-                ?? throw new TransportException('Brak opcji "consumer_group" dla transportu Kafka.'));
+                ?? throw new TransportException('Missing "consumer_group" option for Kafka transport.'));
             $conf->set('auto.offset.reset', $this->options['auto_offset_reset'] ?? 'earliest');
             $conf->set('enable.auto.commit', 'false');
             $consumer = new \RdKafka\KafkaConsumer($conf);

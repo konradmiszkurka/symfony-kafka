@@ -8,6 +8,6 @@ final class ProgressNotFoundException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Brak rozpoczętego postępu dla tego kursu.');
+        return new self('No progress record found for this course.');
     }
 }

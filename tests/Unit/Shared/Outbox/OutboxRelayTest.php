@@ -80,7 +80,7 @@ final class OutboxRelayTest extends TestCase
 
         $count = $relay->relayBatch(10);
 
-        // Ścieżka błędu: nie liczy się, nie oznacza wysłanego, nie zapisuje → wiersz zostanie ponowiony.
+        // Error path: not counted, not marked sent, not saved → row will be retried.
         self::assertSame(0, $count);
         self::assertNull($message->getSentAt());
         self::assertSame([], $repo->saved);

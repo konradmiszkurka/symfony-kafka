@@ -40,9 +40,9 @@ final class CourseCommandHandlersTest extends TestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
 
-        (new CreateCourseHandler($repo))(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        (new AddSectionHandler($repo))(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
-        (new AddLessonHandler($repo))(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lekcja', 'treść'));
+        (new CreateCourseHandler($repo))(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        (new AddSectionHandler($repo))(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
+        (new AddLessonHandler($repo))(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lesson', 'content'));
         (new PublishCourseHandler($repo))(new PublishCourseCommand($courseId, $instructor));
 
         $course = $repo->ofId($courseId);
@@ -56,10 +56,10 @@ final class CourseCommandHandlersTest extends TestCase
         $repo = $this->repo();
         $owner = Uuid::v4();
         $courseId = Uuid::v4();
-        (new CreateCourseHandler($repo))(new CreateCourseCommand($courseId, $owner, 'Kurs', 'Opis'));
+        (new CreateCourseHandler($repo))(new CreateCourseCommand($courseId, $owner, 'Course', 'Description'));
 
         $this->expectException(NotCourseOwnerException::class);
-        (new AddSectionHandler($repo))(new AddSectionCommand($courseId, Uuid::v4(), Uuid::v4(), 'Sekcja'));
+        (new AddSectionHandler($repo))(new AddSectionCommand($courseId, Uuid::v4(), Uuid::v4(), 'Section'));
     }
 
     public function testPublishMissingCourseThrows(): void

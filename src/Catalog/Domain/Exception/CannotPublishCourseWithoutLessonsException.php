@@ -8,6 +8,6 @@ final class CannotPublishCourseWithoutLessonsException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Nie można opublikować kursu bez żadnej lekcji.');
+        return new self('Cannot publish a course without any lessons.');
     }
 }

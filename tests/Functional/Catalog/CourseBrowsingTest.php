@@ -19,9 +19,9 @@ final class CourseBrowsingTest extends WebTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, $title, 'Opis kursu'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lekcja A', 'treść'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, $title, 'Course description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lesson A', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         return $courseId;
@@ -31,29 +31,29 @@ final class CourseBrowsingTest extends WebTestCase
     {
         $client = static::createClient();
         $bus = self::getContainer()->get(CommandBusInterface::class);
-        $this->publishCourse($bus, 'Opublikowany Kurs');
-        // kurs w wersji roboczej (bez publikacji)
-        $bus->dispatch(new CreateCourseCommand(Uuid::v4(), Uuid::v4(), 'Roboczy Kurs', 'Opis'));
+        $this->publishCourse($bus, 'Published Course');
+        // draft course (not published)
+        $bus->dispatch(new CreateCourseCommand(Uuid::v4(), Uuid::v4(), 'Draft Course', 'Description'));
 
         $client->request('GET', '/courses');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('body', 'Opublikowany Kurs');
-        self::assertStringNotContainsString('Roboczy Kurs', $client->getResponse()->getContent());
+        self::assertSelectorTextContains('body', 'Published Course');
+        self::assertStringNotContainsString('Draft Course', $client->getResponse()->getContent());
     }
 
     public function testCourseDetailShowsSectionsAndLessons(): void
     {
         $client = static::createClient();
         $bus = self::getContainer()->get(CommandBusInterface::class);
-        $courseId = $this->publishCourse($bus, 'Kurs Szczegółowy');
+        $courseId = $this->publishCourse($bus, 'Detailed Course');
 
         $client->request('GET', '/courses/'.$courseId);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('body', 'Kurs Szczegółowy');
-        self::assertSelectorTextContains('body', 'Sekcja');
-        self::assertSelectorTextContains('body', 'Lekcja A');
+        self::assertSelectorTextContains('body', 'Detailed Course');
+        self::assertSelectorTextContains('body', 'Section');
+        self::assertSelectorTextContains('body', 'Lesson A');
     }
 
     public function testUnpublishedOrMissingCourseReturns404(): void
@@ -61,7 +61,7 @@ final class CourseBrowsingTest extends WebTestCase
         $client = static::createClient();
         $bus = self::getContainer()->get(CommandBusInterface::class);
         $draftId = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($draftId, Uuid::v4(), 'Roboczy', 'Opis'));
+        $bus->dispatch(new CreateCourseCommand($draftId, Uuid::v4(), 'Draft', 'Description'));
 
         $client->request('GET', '/courses/'.$draftId);
         self::assertResponseStatusCodeSame(404);

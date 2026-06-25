@@ -14,7 +14,7 @@ final class RegistrationFormData
     public ?string $email = null;
 
     #[Assert\NotBlank]
-    #[Assert\Length(min: 8, minMessage: 'Hasło musi mieć min. {{ limit }} znaków.')]
+    #[Assert\Length(min: 8, minMessage: 'Password must be at least {{ limit }} characters.')]
     public ?string $plainPassword = null;
 
     #[Assert\NotNull]

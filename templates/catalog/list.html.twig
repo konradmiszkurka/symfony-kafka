@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
-{% block title %}Katalog kursów{% endblock %}
+{% block title %}Course Catalog{% endblock %}
 {% block body %}
-    <h1>Katalog kursów</h1>
+    <h1>Course Catalog</h1>
     <ul>
     {% for course in courses %}
         <li><a href="{{ path('catalog_detail', {id: course.id}) }}">{{ course.title }}</a></li>
     {% else %}
-        <li>Brak opublikowanych kursów.</li>
+        <li>No published courses.</li>
     {% endfor %}
     </ul>
 {% endblock %}

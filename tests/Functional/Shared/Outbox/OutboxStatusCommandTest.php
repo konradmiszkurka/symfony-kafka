@@ -21,8 +21,8 @@ final class OutboxStatusCommandTest extends KernelTestCase
         $tester->execute([]);
 
         $output = $tester->getDisplay();
-        self::assertStringContainsString('Niewysłane:', $output);
-        self::assertStringContainsString('Zalegające', $output);
+        self::assertStringContainsString('Unsent:', $output);
+        self::assertStringContainsString('Stuck', $output);
     }
 
     public function testStatusExitsSuccessfullyWhenNoStuckMessages(): void
@@ -33,7 +33,7 @@ final class OutboxStatusCommandTest extends KernelTestCase
         $command = $application->find('app:outbox:status');
         $tester = new CommandTester($command);
 
-        // Przy pustym outboxie (DAMA rollback) nie ma zalegających → SUCCESS
+        // With an empty outbox (DAMA rollback) there are no stuck messages → SUCCESS
         $exitCode = $tester->execute(['--stuck-after' => '1']);
 
         self::assertSame(0, $exitCode);

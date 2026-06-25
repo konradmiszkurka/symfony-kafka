@@ -37,7 +37,7 @@ final readonly class MarkLessonCompletedHandler
         $this->progress->save($progress);
 
         if (!$newlyCompleted) {
-            return; // idempotentnie — lekcja już była ukończona, brak eventów
+            return; // idempotent — lesson was already completed, no events
         }
 
         $now = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);

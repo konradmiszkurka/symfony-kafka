@@ -8,6 +8,6 @@ final class LessonNotInCourseException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Lekcja nie należy do tego kursu.');
+        return new self('Lesson does not belong to this course.');
     }
 }

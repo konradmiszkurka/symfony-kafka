@@ -25,9 +25,9 @@ final class CourseAuthoringIntegrationTest extends KernelTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
 
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Symfony', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Wstęp'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lekcja 1', 'treść'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Symfony', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Introduction'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lesson 1', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         self::getContainer()->get('doctrine')->getManager()->clear();

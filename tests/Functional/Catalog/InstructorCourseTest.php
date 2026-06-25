@@ -47,7 +47,7 @@ final class InstructorCourseTest extends WebTestCase
         $bus->dispatch(new RegisterUserCommand('a@example.com', 'secret123', Role::Instructor));
         $instructorA = $userRepo->ofEmail('a@example.com');
         $courseId = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructorA->getId(), 'Kurs A', 'Opis'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructorA->getId(), 'Course A', 'Description'));
 
         // Log in as instructor B
         $bus->dispatch(new RegisterUserCommand('b@example.com', 'secret123', Role::Instructor));
@@ -67,19 +67,19 @@ final class InstructorCourseTest extends WebTestCase
         // create course
         $client->request('GET', '/instructor/courses/new');
         self::assertResponseIsSuccessful();
-        $client->submitForm('Utwórz', [
-            'course_form[title]' => 'Mój Kurs',
-            'course_form[description]' => 'Opis kursu',
+        $client->submitForm('Create', [
+            'course_form[title]' => 'My Course',
+            'course_form[description]' => 'Course description',
         ]);
         self::assertResponseRedirects();
         $client->followRedirect();
         // manage page shows the course
-        self::assertSelectorTextContains('body', 'Mój Kurs');
+        self::assertSelectorTextContains('body', 'My Course');
 
         // add section
-        $client->submitForm('Dodaj sekcję', ['section_form[title]' => 'Sekcja 1']);
+        $client->submitForm('Add section', ['section_form[title]' => 'Section 1']);
         $client->followRedirect();
-        self::assertSelectorTextContains('body', 'Sekcja 1');
+        self::assertSelectorTextContains('body', 'Section 1');
 
         // lesson form is present
         self::assertSelectorExists('form[name="lesson_form"]');
@@ -99,13 +99,13 @@ final class InstructorCourseTest extends WebTestCase
         // Seed a publishable course (with a lesson) owned by the logged-in instructor
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor->getId(), 'Kurs do publikacji', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor->getId(), 'Sekcja'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor->getId(), 'Lekcja', 'treść'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor->getId(), 'Course to publish', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor->getId(), 'Section'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor->getId(), 'Lesson', 'content'));
 
         // Submit the real (CSRF-protected) publish form from the manage page
         $client->request('GET', '/instructor/courses/' . $courseId);
-        $client->submitForm('Opublikuj kurs');
+        $client->submitForm('Publish course');
         self::assertResponseRedirects('/instructor/courses/' . $courseId);
 
         // The course is now published (visible via the published-course query)

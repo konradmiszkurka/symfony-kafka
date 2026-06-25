@@ -36,10 +36,10 @@ final readonly class SendWelcomeOnUserEnrolledHandler
             return;
         }
 
-        // Kolejność send -> save jest świadoma (at-least-once): wolimy ewentualny
-        // duplikat maila niż jego utratę. Idempotencję gwarantuje unikat w DB
-        // (type, user, course) sprawdzany przez alreadySent().
-        $this->mailer->send($email, 'Witaj na kursie!', 'Zapisałeś się na kurs. Powodzenia w nauce!');
+        // send -> save order is intentional (at-least-once): we prefer a potential
+        // duplicate email over losing it. Idempotency is guaranteed by the DB unique
+        // constraint on (type, user, course) checked by alreadySent().
+        $this->mailer->send($email, 'Welcome to the course!', 'You have been enrolled in the course. Good luck with your studies!');
         $this->sent->save(new SentNotification(NotificationType::Welcome, $userId, $courseId));
     }
 }

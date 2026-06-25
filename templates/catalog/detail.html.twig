@@ -8,7 +8,7 @@
     <h1>{{ course.title }}</h1>
     <p>{{ course.description }}</p>
     {% if progress is defined and progress is not null %}
-        <p>Twój postęp: {{ progress.percentage }}% ({{ progress.completedLessons }}/{{ progress.totalLessons }}){% if progress.completed %} — ukończono!{% endif %}</p>
+        <p>Your progress: {{ progress.percentage }}% ({{ progress.completedLessons }}/{{ progress.totalLessons }}){% if progress.completed %} — completed!{% endif %}</p>
     {% endif %}
     {% for section in course.sections %}
         <h2>{{ section.title }}</h2>
@@ -18,7 +18,7 @@
                 {% if is_granted('ROLE_USER') %}
                     <form method="post" action="{{ path('progress_mark_lesson', {courseId: course.id, lessonId: lesson.id}) }}" style="display:inline">
                         <input type="hidden" name="_token" value="{{ csrf_token('complete-' ~ lesson.id) }}">
-                        <button type="submit">Ukończ</button>
+                        <button type="submit">Complete</button>
                     </form>
                 {% endif %}
             </li>
@@ -29,9 +29,9 @@
     {% if is_granted('ROLE_USER') %}
         <form method="post" action="{{ path('enroll', {id: course.id}) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('enroll-' ~ course.id) }}">
-            <button type="submit">Zapisz się</button>
+            <button type="submit">Enroll</button>
         </form>
     {% else %}
-        <p><a href="{{ path('login') }}">Zaloguj się, aby zapisać się na kurs</a></p>
+        <p><a href="{{ path('login') }}">Sign in to enroll in this course</a></p>
     {% endif %}
 {% endblock %}

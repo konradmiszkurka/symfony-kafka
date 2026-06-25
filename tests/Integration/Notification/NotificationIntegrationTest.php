@@ -26,7 +26,7 @@ final class NotificationIntegrationTest extends KernelTestCase
 
         $handler = self::getContainer()->get(SendWelcomeOnUserEnrolledHandler::class);
         $handler($event);
-        $handler($event); // dedupe — drugi raz nie wysyła
+        $handler($event); // dedupe — second call does not send
 
         self::assertEmailCount(1);
         self::assertEmailAddressContains(self::getMailerMessages()[0], 'From', 'platforma@example.com');

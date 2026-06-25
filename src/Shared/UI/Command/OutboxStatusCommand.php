@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('app:outbox:status', 'Stan outboxa: niewysłane / zalegające')]
+#[AsCommand('app:outbox:status', 'Outbox status: unsent / stuck')]
 final class OutboxStatusCommand extends Command
 {
     public function __construct(private readonly OutboxRepository $outboxRepository)
@@ -25,7 +25,7 @@ final class OutboxStatusCommand extends Command
             'stuck-after',
             null,
             InputOption::VALUE_REQUIRED,
-            'Próg zalegania w minutach',
+            'Stuck threshold in minutes',
             '5'
         );
     }
@@ -38,8 +38,8 @@ final class OutboxStatusCommand extends Command
         $unsent = $this->outboxRepository->countUnsent();
         $stuck = $this->outboxRepository->countStuck($threshold);
 
-        $output->writeln(sprintf('Niewysłane: %d', $unsent));
-        $output->writeln(sprintf('Zalegające (>%d min): %d', $minutes, $stuck));
+        $output->writeln(sprintf('Unsent: %d', $unsent));
+        $output->writeln(sprintf('Stuck (>%d min): %d', $minutes, $stuck));
 
         return $stuck > 0 ? Command::FAILURE : Command::SUCCESS;
     }

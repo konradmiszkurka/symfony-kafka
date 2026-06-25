@@ -27,21 +27,21 @@ final class ProgressControllerTest extends WebTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'L1', 't'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'L1', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         $bus->dispatch(new RegisterUserCommand('student@example.com', 'secret123', Role::Student));
         $user = self::getContainer()->get(UserRepository::class)->ofEmail('student@example.com');
-        // zainicjuj postęp (normalnie robi to konsument Kafki)
+        // initialise progress (normally done by the Kafka consumer)
         (self::getContainer()->get(InitProgressOnUserEnrolledHandler::class))(
             new UserEnrolled((string) $user->getId(), (string) $courseId, '2026-06-24T10:00:00+00:00')
         );
         $client->loginUser($user);
 
         $client->request('GET', '/courses/'.$courseId);
-        $client->submitForm('Ukończ');
+        $client->submitForm('Complete');
 
         self::assertResponseRedirects('/courses/'.$courseId);
         $progress = self::getContainer()->get(ProgressRepository::class)->ofUserAndCourse($user->getId(), $courseId);

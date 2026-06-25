@@ -8,6 +8,6 @@ final class AlreadyEnrolledException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Jesteś już zapisany na ten kurs.');
+        return new self('You are already enrolled in this course.');
     }
 }

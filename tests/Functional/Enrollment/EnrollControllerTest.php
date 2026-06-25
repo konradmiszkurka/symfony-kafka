@@ -23,9 +23,9 @@ final class EnrollControllerTest extends WebTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lekcja', 'treść'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'Lesson', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         return $courseId;
@@ -54,7 +54,7 @@ final class EnrollControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $client->request('GET', '/courses/'.$courseId);
-        $client->submitForm('Zapisz się');
+        $client->submitForm('Enroll');
         self::assertResponseRedirects('/courses/'.$courseId, 302);
 
         $unsent = self::getContainer()->get(OutboxRepository::class)->unsent(100);

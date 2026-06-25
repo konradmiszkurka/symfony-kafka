@@ -8,6 +8,6 @@ final class NotCourseOwnerException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Nie jesteś właścicielem tego kursu.');
+        return new self('You are not the owner of this course.');
     }
 }

@@ -19,7 +19,7 @@ final readonly class MessengerCommandBus implements CommandBusInterface
         try {
             $this->commandBus->dispatch($command);
         } catch (HandlerFailedException $e) {
-            // Odpakuj oryginalny wyjątek domenowy z opakowania Messengera.
+            // Unwrap the original domain exception from the Messenger wrapper.
             throw $e->getPrevious() ?? $e;
         }
     }

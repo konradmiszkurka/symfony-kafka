@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'app:outbox:relay', description: 'Publikuje niewysłane eventy z outboxa na Kafkę')]
+#[AsCommand(name: 'app:outbox:relay', description: 'Publishes unsent outbox events to Kafka')]
 final class OutboxRelayCommand extends Command implements SignalableCommandInterface
 {
     private bool $shouldStop = false;
@@ -25,9 +25,9 @@ final class OutboxRelayCommand extends Command implements SignalableCommandInter
     protected function configure(): void
     {
         $this
-            ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Rozmiar partii', '100')
-            ->addOption('once', null, InputOption::VALUE_NONE, 'Jeden przebieg i wyjście (do cron/testów)')
-            ->addOption('sleep', null, InputOption::VALUE_REQUIRED, 'Czas oczekiwania (w sekundach) gdy batch jest pusty', '1');
+            ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Batch size', '100')
+            ->addOption('once', null, InputOption::VALUE_NONE, 'Single pass and exit (for cron/tests)')
+            ->addOption('sleep', null, InputOption::VALUE_REQUIRED, 'Wait time (in seconds) when batch is empty', '1');
     }
 
     public function getSubscribedSignals(): array
@@ -51,7 +51,7 @@ final class OutboxRelayCommand extends Command implements SignalableCommandInter
         while (!$this->shouldStop) {
             $relayed = $this->relay->relayBatch($limit);
             if ($relayed > 0) {
-                $output->writeln(sprintf('Zrelayowano %d wiadomości.', $relayed));
+                $output->writeln(sprintf('Relayed %d messages.', $relayed));
             }
             if ($once || $this->shouldStop) {
                 break;
@@ -62,7 +62,7 @@ final class OutboxRelayCommand extends Command implements SignalableCommandInter
         }
 
         if ($this->shouldStop) {
-            $output->writeln('Zatrzymano relay.');
+            $output->writeln('Relay stopped.');
         }
 
         return Command::SUCCESS;

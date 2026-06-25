@@ -70,6 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Brak przechowywanych danych wrażliwych w postaci jawnej.
+        // No sensitive data stored in plain text.
     }
 }

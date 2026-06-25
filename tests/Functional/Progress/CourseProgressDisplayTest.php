@@ -33,9 +33,9 @@ final class CourseProgressDisplayTest extends WebTestCase
         $lessonId = Uuid::v4();
         $instructor = Uuid::v4();
 
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs testowy', 'Opis kursu'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja 1'));
-        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, $lessonId, $instructor, 'Lekcja 1', 'tresc'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Test Course', 'Course description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section 1'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, $lessonId, $instructor, 'Lesson 1', 'content'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
         $bus->dispatch(new RegisterUserCommand('progress-display@example.com', 'secret123', Role::Student));
@@ -74,8 +74,8 @@ final class CourseProgressDisplayTest extends WebTestCase
         $lessonId = Uuid::v4();
         $instructor = Uuid::v4();
 
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs anonimowy', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Anonymous Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
         $bus->dispatch(new AddLessonCommand($courseId, $sectionId, $lessonId, $instructor, 'L1', 't'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 

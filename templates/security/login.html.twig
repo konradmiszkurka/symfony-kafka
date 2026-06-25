@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Logowanie{% endblock %}
+{% block title %}Sign In{% endblock %}
 
 {% block body %}
-    <h1>Logowanie</h1>
+    <h1>Sign In</h1>
     {% if error %}
         <div class="alert error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
     <form method="post" action="{{ path('login') }}">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         <label>E-mail <input type="email" name="_username" value="{{ last_username }}"></label>
-        <label>Hasło <input type="password" name="_password"></label>
-        <button type="submit">Zaloguj</button>
+        <label>Password <input type="password" name="_password"></label>
+        <button type="submit">Sign in</button>
     </form>
-    <p><a href="{{ path('register') }}">Załóż konto</a></p>
+    <p><a href="{{ path('register') }}">Create an account</a></p>
 {% endblock %}

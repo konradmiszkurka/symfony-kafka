@@ -30,8 +30,8 @@ final class MarkLessonCompletedIntegrationTest extends KernelTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
         $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'L1', 't'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
 
@@ -40,7 +40,7 @@ final class MarkLessonCompletedIntegrationTest extends KernelTestCase
             new UserEnrolled((string) $userId, (string) $courseId, '2026-06-24T10:00:00+00:00')
         );
 
-        // jedyna lekcja kursu
+        // the only lesson in the course
         $course = self::getContainer()->get(QueryBusInterface::class)->ask(new FindPublishedCourseQuery($courseId));
         \assert($course instanceof Course);
         $lessonId = Uuid::fromString((string) $course->getSections()[0]->getLessons()[0]->getId());

@@ -8,6 +8,6 @@ final class CourseNotEnrollableException extends \DomainException
 {
     public static function create(): self
     {
-        return new self('Na ten kurs nie można się zapisać.');
+        return new self('This course is not open for enrollment.');
     }
 }

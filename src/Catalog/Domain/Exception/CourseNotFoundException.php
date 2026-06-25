@@ -8,6 +8,6 @@ final class CourseNotFoundException extends \DomainException
 {
     public static function withId(string $courseId): self
     {
-        return new self(sprintf('Kurs "%s" nie istnieje.', $courseId));
+        return new self(sprintf('Course "%s" does not exist.', $courseId));
     }
 }

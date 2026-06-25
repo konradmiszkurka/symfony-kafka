@@ -27,19 +27,19 @@ final class EnrollController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid('enroll-'.$id, (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Nieprawidłowy token CSRF.');
+            $this->addFlash('error', 'Invalid CSRF token.');
 
             return $this->redirectToRoute('catalog_detail', ['id' => $id]);
         }
 
         $user = $this->getUser();
         if (!$user instanceof User) {
-            throw new \LogicException('Oczekiwano zalogowanego użytkownika.');
+            throw new \LogicException('Expected a logged-in user.');
         }
 
         try {
             $commandBus->dispatch(new EnrollStudentCommand($user->getId(), Uuid::fromString($id)));
-            $this->addFlash('success', 'Zapisano na kurs.');
+            $this->addFlash('success', 'Enrolled in the course.');
         } catch (AlreadyEnrolledException|CourseNotEnrollableException $e) {
             $this->addFlash('error', $e->getMessage());
         }

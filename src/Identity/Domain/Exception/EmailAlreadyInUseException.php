@@ -8,6 +8,6 @@ final class EmailAlreadyInUseException extends \DomainException
 {
     public static function forEmail(string $email): self
     {
-        return new self(sprintf('Email "%s" jest już zajęty.', $email));
+        return new self(sprintf('Email "%s" is already in use.', $email));
     }
 }

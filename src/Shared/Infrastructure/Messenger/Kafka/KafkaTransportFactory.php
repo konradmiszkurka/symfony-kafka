@@ -18,7 +18,7 @@ final class KafkaTransportFactory implements TransportFactoryInterface
     public function createTransport(string $dsn, array $options, SerializerInterface $serializer): TransportInterface
     {
         $brokers = substr($dsn, \strlen('kafka://'));
-        // Odetnij ewentualny query string z DSN (opcje przychodzą przez $options).
+        // Strip any query string from the DSN (options come via $options).
         $brokers = explode('?', $brokers)[0];
 
         unset($options['transport_name']);

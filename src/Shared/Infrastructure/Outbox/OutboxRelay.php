@@ -30,7 +30,7 @@ final readonly class OutboxRelay
                 $this->outbox->save($message);
                 ++$relayed;
             } catch (\Throwable $e) {
-                $this->logger->error('Relay outboxa nie powiódł się dla wiadomości {id}', [
+                $this->logger->error('Outbox relay failed for message {id}', [
                     'id' => (string) $message->getId(),
                     'exception' => $e,
                 ]);

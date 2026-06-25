@@ -36,10 +36,10 @@ final readonly class SendCongratsOnCourseCompletedHandler
             return;
         }
 
-        // Kolejność send -> save jest świadoma (at-least-once): wolimy ewentualny
-        // duplikat maila niż jego utratę. Idempotencję gwarantuje unikat w DB
-        // (type, user, course) sprawdzany przez alreadySent().
-        $this->mailer->send($email, 'Gratulacje — kurs ukończony!', 'Ukończyłeś cały kurs. Świetna robota!');
+        // send -> save order is intentional (at-least-once): we prefer a potential
+        // duplicate email over losing it. Idempotency is guaranteed by the DB unique
+        // constraint on (type, user, course) checked by alreadySent().
+        $this->mailer->send($email, 'Congratulations — course completed!', 'You have completed the entire course. Great job!');
         $this->sent->save(new SentNotification(NotificationType::CourseCompleted, $userId, $courseId));
     }
 }

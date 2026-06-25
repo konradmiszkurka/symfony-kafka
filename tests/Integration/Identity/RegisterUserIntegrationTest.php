@@ -29,7 +29,7 @@ final class RegisterUserIntegrationTest extends KernelTestCase
         self::assertNotNull($user);
         self::assertSame('nowy@example.com', $user->getEmail());
         self::assertContains('ROLE_STUDENT', $user->getRoles());
-        self::assertNotSame('secret123', $user->getPassword(), 'hasło musi być zahaszowane');
+        self::assertNotSame('secret123', $user->getPassword(), 'password must be hashed');
     }
 
     public function testDuplicateEmailThrows(): void

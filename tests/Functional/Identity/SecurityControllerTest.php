@@ -27,7 +27,7 @@ final class SecurityControllerTest extends WebTestCase
             ->dispatch(new RegisterUserCommand('login@example.com', 'secret123', Role::Student));
 
         $client->request('GET', '/login');
-        $client->submitForm('Zaloguj', [
+        $client->submitForm('Sign in', [
             '_username' => 'login@example.com',
             '_password' => 'secret123',
         ]);
@@ -44,7 +44,7 @@ final class SecurityControllerTest extends WebTestCase
             ->dispatch(new RegisterUserCommand('zly@example.com', 'secret123', Role::Student));
 
         $client->request('GET', '/login');
-        $client->submitForm('Zaloguj', [
+        $client->submitForm('Sign in', [
             '_username' => 'zly@example.com',
             '_password' => 'bledne-haslo',
         ]);

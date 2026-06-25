@@ -24,8 +24,8 @@ final class InitProgressIntegrationTest extends KernelTestCase
         $courseId = Uuid::v4();
         $sectionId = Uuid::v4();
         $instructor = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Kurs', 'Opis'));
-        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Sekcja'));
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor, 'Course', 'Description'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor, 'Section'));
         $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'L1', 't'));
         $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor, 'L2', 't'));
         $bus->dispatch(new PublishCourseCommand($courseId, $instructor));
@@ -35,7 +35,7 @@ final class InitProgressIntegrationTest extends KernelTestCase
         $event = new UserEnrolled((string) $userId, (string) $courseId, '2026-06-24T10:00:00+00:00');
 
         $handler($event);
-        $handler($event); // idempotentnie
+        $handler($event); // idempotent
 
         $repo = self::getContainer()->get(ProgressRepository::class);
         $progress = $repo->ofUserAndCourse($userId, $courseId);

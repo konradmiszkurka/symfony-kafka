@@ -23,7 +23,7 @@ final class RegistrationControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/register');
 
-        $client->submitForm('Zarejestruj', [
+        $client->submitForm('Register', [
             'registration_form[email]' => 'rejestracja@example.com',
             'registration_form[plainPassword]' => 'secret123',
             'registration_form[role]' => 'ROLE_STUDENT',
@@ -41,7 +41,7 @@ final class RegistrationControllerTest extends WebTestCase
 
         $register = static function () use ($client): void {
             $client->request('GET', '/register');
-            $client->submitForm('Zarejestruj', [
+            $client->submitForm('Register', [
                 'registration_form[email]' => 'duplikat@example.com',
                 'registration_form[plainPassword]' => 'secret123',
                 'registration_form[role]' => 'ROLE_STUDENT',
@@ -51,6 +51,6 @@ final class RegistrationControllerTest extends WebTestCase
         $register();
         $register();
 
-        self::assertSelectorTextContains('body', 'zajęty');
+        self::assertSelectorTextContains('body', 'already in use');
     }
 }

@@ -26,7 +26,7 @@ final readonly class InitProgressOnUserEnrolledHandler
         $courseId = Uuid::fromString($event->courseId);
 
         if ($this->progress->exists($userId, $courseId)) {
-            return; // idempotentnie — postęp już zainicjowany
+            return; // idempotent — progress already initialised
         }
 
         $totalLessons = \count($this->courses->lessonIds($courseId));

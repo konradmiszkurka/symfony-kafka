@@ -42,9 +42,9 @@ final class KafkaRoundtripTest extends TestCase
             }
         }
 
-        self::assertNotNull($received, 'Nie odebrano wiadomości z realnej Kafki.');
+        self::assertNotNull($received, 'No message received from real Kafka.');
         $message = $received->getMessage();
-        self::assertInstanceOf(SmokePayload::class, $message, 'Odebrana wiadomość powinna być instancją SmokePayload.');
-        self::assertSame($sentPayload->value, $message->value, 'Wartość payload nie zgadza się z wysłaną.');
+        self::assertInstanceOf(SmokePayload::class, $message, 'Received message should be an instance of SmokePayload.');
+        self::assertSame($sentPayload->value, $message->value, 'Payload value does not match what was sent.');
     }
 }

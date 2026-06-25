@@ -43,7 +43,7 @@ class Section
     }
 
     /**
-     * @internal Część agregatu Course — wołaj przez Course::addLessonToSection().
+     * @internal Part of the Course aggregate — call via Course::addLessonToSection().
      */
     public function addLesson(Uuid $lessonId, string $title, string $content): void
     {

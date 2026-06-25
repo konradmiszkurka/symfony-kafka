@@ -33,7 +33,7 @@ final class OutboxRepositoryCountTest extends KernelTestCase
         $repo->add($msg);
         self::getContainer()->get('doctrine')->getManager()->flush();
 
-        // Threshold w przyszłości → świeży wiersz ma createdAt < threshold → jest "zalegający"
+        // Threshold in the future → fresh row has createdAt < threshold → is "stuck"
         $futureThreshold = new \DateTimeImmutable('+1 minute');
         self::assertGreaterThanOrEqual(1, $repo->countStuck($futureThreshold));
     }
@@ -43,7 +43,7 @@ final class OutboxRepositoryCountTest extends KernelTestCase
         self::bootKernel();
         $repo = self::getContainer()->get(OutboxRepository::class);
 
-        // Threshold w przeszłości → świeży wiersz ma createdAt >= threshold → NIE jest zalegający
+        // Threshold in the past → fresh row has createdAt >= threshold → is NOT stuck
         $pastThreshold = new \DateTimeImmutable('-1 minute');
         $stuckBefore = $repo->countStuck($pastThreshold);
 

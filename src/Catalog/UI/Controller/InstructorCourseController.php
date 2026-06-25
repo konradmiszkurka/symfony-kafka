@@ -109,14 +109,14 @@ final class InstructorCourseController extends AbstractController
         $this->ownedCourse($id, $courses);
 
         if (!$this->isCsrfTokenValid('publish-'.$id, (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Nieprawidłowy token CSRF.');
+            $this->addFlash('error', 'Invalid CSRF token.');
 
             return $this->redirectToRoute('instructor_course_manage', ['id' => $id]);
         }
 
         try {
             $commandBus->dispatch(new PublishCourseCommand($this->uuid($id), $this->instructorId()));
-            $this->addFlash('success', 'Kurs opublikowany.');
+            $this->addFlash('success', 'Course published.');
         } catch (CannotPublishCourseWithoutLessonsException $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -128,7 +128,7 @@ final class InstructorCourseController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            throw new \LogicException('Oczekiwano zalogowanego użytkownika typu User.');
+            throw new \LogicException('Expected a logged-in user of type User.');
         }
 
         return $user->getId();
