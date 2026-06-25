@@ -42,6 +42,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Notification/Domain'
                 prefix: 'App\Notification\Domain'
                 alias: Notification
+            Outbox:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Shared/Infrastructure/Outbox'
+                prefix: 'App\Shared\Infrastructure\Outbox'
+                alias: Outbox
 
 when@test:
     doctrine:
