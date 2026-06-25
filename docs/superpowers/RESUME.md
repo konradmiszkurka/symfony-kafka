@@ -48,7 +48,7 @@ Kolejność wg „najszybszy widoczny efekt → twardsze hardening":
 1. ~~**Wyświetlić % ukończenia w UI**~~ ✅ ZROBIONE (commit 7c8ca48) — `CourseProgress::completionPercentage()` już istnieje i jest przetestowane; brakuje renderu na stronie kursu (np. `templates/catalog/detail.html.twig` lub osobny widok „moje postępy"). Najszybszy, widoczny efekt.
 2. ~~**MAILER from-address do configu**~~ ✅ ZROBIONE (303da45) — `SymfonyMailer` ma zahardcodowane `from('platforma@example.com')`; przenieść do env/`framework.mailer.envelope.sender`.
 3. ~~**Testy jednostkowe KafkaTransport bez brokera**~~ ✅ ZROBIONE (8e37ff0) — `ack()` rzuca przy braku stampa, guardy `topic`/`consumer_group`, mapowanie nagłówków w `send()`. Round-trip pokryty smoke-testem grupy `kafka`.
-4. **CSRF na formularzu „Opublikuj"** (Faza 3, `templates/instructor/manage_course.html.twig`) — chroniony rolą ROLE_INSTRUCTOR, więc Minor; dla spójności dodać token jak przy enroll/complete.
+4. ~~**CSRF na formularzu „Opublikuj"**~~ ✅ ZROBIONE (4f06756) (Faza 3, `templates/instructor/manage_course.html.twig`) — chroniony rolą ROLE_INSTRUCTOR, więc Minor; dla spójności dodać token jak przy enroll/complete.
 5. **(post-MVP) Transactional outbox** — domknięcie at-least-once luk save→publish / send→save (świadomie udokumentowane jako trade-off).
 
 Tryb pracy bez zmian: Subagent-Driven, **commity bez śladu AI**. Każdy follow-up = mały plan/task → review → merge.
