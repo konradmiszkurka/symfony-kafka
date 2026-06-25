@@ -15,3 +15,4 @@ compose.override.yaml
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+/.env.dev
