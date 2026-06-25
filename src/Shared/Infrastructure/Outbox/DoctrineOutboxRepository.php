@@ -30,4 +30,18 @@ final readonly class DoctrineOutboxRepository implements OutboxRepository
                 ->findBy(['sentAt' => null], ['createdAt' => 'ASC'], $limit)
         );
     }
+
+    public function countUnsent(): int
+    {
+        return (int) $this->em->createQuery(
+            'SELECT COUNT(m.id) FROM ' . OutboxMessage::class . ' m WHERE m.sentAt IS NULL'
+        )->getSingleScalarResult();
+    }
+
+    public function countStuck(\DateTimeImmutable $olderThan): int
+    {
+        return (int) $this->em->createQuery(
+            'SELECT COUNT(m.id) FROM ' . OutboxMessage::class . ' m WHERE m.sentAt IS NULL AND m.createdAt < :t'
+        )->setParameter('t', $olderThan)->getSingleScalarResult();
+    }
 }

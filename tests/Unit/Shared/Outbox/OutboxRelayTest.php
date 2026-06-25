@@ -25,6 +25,8 @@ final class OutboxRelayTest extends TestCase
             public function add(OutboxMessage $message): void {}
             public function save(OutboxMessage $message): void { $this->saved[] = $message; }
             public function unsent(int $limit): array { return null === $this->m->getSentAt() ? [$this->m] : []; }
+            public function countUnsent(): int { return null === $this->m->getSentAt() ? 1 : 0; }
+            public function countStuck(\DateTimeImmutable $olderThan): int { return 0; }
         };
 
         $event = new \stdClass();
@@ -60,6 +62,8 @@ final class OutboxRelayTest extends TestCase
             public function add(OutboxMessage $message): void {}
             public function save(OutboxMessage $message): void { $this->saved[] = $message; }
             public function unsent(int $limit): array { return [$this->m]; }
+            public function countUnsent(): int { return 1; }
+            public function countStuck(\DateTimeImmutable $olderThan): int { return 0; }
         };
 
         $serializer = $this->createStub(SerializerInterface::class);

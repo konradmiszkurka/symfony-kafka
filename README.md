@@ -45,6 +45,29 @@ Nieudane wiadomości: `bin/console messenger:failed:show`.
 ### Relay outboxa (producent → Kafka)
 Eventy domenowe trafiają najpierw do tabeli `outbox` (atomowo ze zmianą stanu). Relay dowozi je na Kafkę:
 ```bash
-docker compose exec php bin/console app:outbox:relay -vv        # worker w pętli
-docker compose exec php bin/console app:outbox:relay --once     # jeden przebieg (cron)
+docker compose exec php bin/console app:outbox:relay -vv              # worker w pętli (domyślny sleep 1 s)
+docker compose exec php bin/console app:outbox:relay --once           # jeden przebieg (cron)
+docker compose exec php bin/console app:outbox:relay --sleep=5        # worker z 5-sekundowym interwałem
+```
+
+**Graceful shutdown**: Relay obsługuje sygnały `SIGTERM` i `SIGINT` przez `SignalableCommandInterface`.
+Po odebraniu sygnału kończy bieżącą iterację batcha, wypisuje `Zatrzymano relay.` i wychodzi z kodem 0.
+Zakłada, że w danym momencie działa tylko jedna instancja relay (brak blokady wyścigu).
+
+Opcje:
+- `--limit=N` — rozmiar batcha (domyślnie 100)
+- `--once` — jeden przebieg i wyjście
+- `--sleep=N` — interwał w sekundach gdy batch jest pusty (domyślnie 1)
+
+### Monitoring outboxa
+```bash
+docker compose exec php bin/console app:outbox:status                 # sprawdź stan (domyślny próg 5 min)
+docker compose exec php bin/console app:outbox:status --stuck-after=2 # próg zalegania 2 minuty
+```
+
+Komenda wypisuje liczbę niewysłanych wierszy i liczbę zalegających (bez `sentAt` i `createdAt` starsze niż próg).
+**Zwraca kod 1 (FAILURE) gdy są zalegające wiersze** — dzięki temu nadaje się do monitoringu / cron alertów:
+```bash
+# w cronie lub healthchecku:
+bin/console app:outbox:status --stuck-after=5 || alert "Outbox ma zalegające wiersze!"
 ```

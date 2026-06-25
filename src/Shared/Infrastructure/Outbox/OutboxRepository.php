@@ -14,4 +14,10 @@ interface OutboxRepository
 
     /** @return list<OutboxMessage> */
     public function unsent(int $limit): array;
+
+    /** Liczba wierszy bez sentAt (jeszcze niewysłanych). */
+    public function countUnsent(): int;
+
+    /** Liczba wierszy bez sentAt, których createdAt < $olderThan (zalegające). */
+    public function countStuck(\DateTimeImmutable $olderThan): int;
 }
