@@ -41,3 +41,10 @@ docker compose exec php bin/console messenger:consume notification_progress_in -
 ```
 Maile widać w Mailpit (http://localhost:8025), eventy w Kafka UI (http://localhost:8081).
 Nieudane wiadomości: `bin/console messenger:failed:show`.
+
+### Relay outboxa (producent → Kafka)
+Eventy domenowe trafiają najpierw do tabeli `outbox` (atomowo ze zmianą stanu). Relay dowozi je na Kafkę:
+```bash
+docker compose exec php bin/console app:outbox:relay -vv        # worker w pętli
+docker compose exec php bin/console app:outbox:relay --once     # jeden przebieg (cron)
+```

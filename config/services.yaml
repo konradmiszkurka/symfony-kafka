@@ -83,3 +83,7 @@ services:
 
     App\Shared\Infrastructure\Outbox\OutboxRepository:
         alias: App\Shared\Infrastructure\Outbox\DoctrineOutboxRepository
+
+    App\Shared\Infrastructure\Outbox\OutboxRelay:
+        arguments:
+            $eventBus: '@event.bus'
