@@ -7,6 +7,9 @@
 
     <h1>{{ course.title }}</h1>
     <p>{{ course.description }}</p>
+    {% if progress is defined and progress is not null %}
+        <p>Twój postęp: {{ progress.percentage }}% ({{ progress.completedLessons }}/{{ progress.totalLessons }}){% if progress.completed %} — ukończono!{% endif %}</p>
+    {% endif %}
     {% for section in course.sections %}
         <h2>{{ section.title }}</h2>
         <ol>

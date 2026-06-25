@@ -6,6 +6,8 @@ namespace App\Catalog\UI\Controller;
 
 use App\Catalog\Application\FindPublishedCourse\FindPublishedCourseQuery;
 use App\Catalog\Domain\Course;
+use App\Identity\Domain\User;
+use App\Progress\Application\FindCourseProgress\FindCourseProgressQuery;
 use App\Shared\Application\Bus\QueryBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +28,15 @@ final class CourseDetailController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render('catalog/detail.html.twig', ['course' => $course]);
+        $progress = null;
+        $user = $this->getUser();
+        if ($user instanceof User) {
+            $progress = $queryBus->ask(new FindCourseProgressQuery(
+                $user->getId(),
+                Uuid::fromString($id),
+            ));
+        }
+
+        return $this->render('catalog/detail.html.twig', ['course' => $course, 'progress' => $progress]);
     }
 }
