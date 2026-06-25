@@ -54,6 +54,6 @@ Kolejność wg „najszybszy widoczny efekt → twardsze hardening":
 Tryb pracy bez zmian: Subagent-Driven, **commity bez śladu AI**. Każdy follow-up = mały plan/task → review → merge.
 
 ## Po outboxie — pozostałe nice-to-have (opcjonalne)
-- Outbox operability: graceful shutdown workera (sygnały) + opcja `--sleep` w `app:outbox:relay`; monitoring zalegających wierszy (sent_at IS NULL i stare).
+- ~~Outbox operability (graceful shutdown + --sleep + app:outbox:status)~~ ZROBIONE (ebbd206)
 - `.env.test` dummy secret — oznaczyć w GitGuardian jako false-positive (fixture testowy) lub zgenerycznić wartość.
 - Wielo-instancyjny relay (SELECT ... FOR UPDATE SKIP LOCKED) — gdy pojawi się potrzeba skali.
