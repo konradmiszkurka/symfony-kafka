@@ -25,6 +25,7 @@
     {{ form_end(lessonForm) }}
 
     <form method="post" action="{{ path('instructor_course_publish', {id: course.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('publish-' ~ course.id) }}">
         <button type="submit" id="publish">Opublikuj kurs</button>
     </form>
 {% endblock %}

@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Catalog;
 
+use App\Catalog\Application\AddLesson\AddLessonCommand;
+use App\Catalog\Application\AddSection\AddSectionCommand;
 use App\Catalog\Application\CreateCourse\CreateCourseCommand;
+use App\Catalog\Application\FindPublishedCourse\FindPublishedCourseQuery;
+use App\Catalog\Domain\Course;
 use App\Identity\Application\RegisterUser\RegisterUserCommand;
 use App\Identity\Domain\Role;
 use App\Identity\Domain\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Application\Bus\QueryBusInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -81,5 +86,31 @@ final class InstructorCourseTest extends WebTestCase
 
         // publish button exists
         self::assertSelectorExists('button#publish, form[action*="/publish"] button');
+    }
+
+    public function testInstructorPublishesCourseViaCsrfProtectedForm(): void
+    {
+        $client = static::createClient();
+        $bus = self::getContainer()->get(CommandBusInterface::class);
+        $bus->dispatch(new RegisterUserCommand('owner@example.com', 'secret123', Role::Instructor));
+        $instructor = self::getContainer()->get(UserRepository::class)->ofEmail('owner@example.com');
+        $client->loginUser($instructor);
+
+        // Seed a publishable course (with a lesson) owned by the logged-in instructor
+        $courseId = Uuid::v4();
+        $sectionId = Uuid::v4();
+        $bus->dispatch(new CreateCourseCommand($courseId, $instructor->getId(), 'Kurs do publikacji', 'Opis'));
+        $bus->dispatch(new AddSectionCommand($courseId, $sectionId, $instructor->getId(), 'Sekcja'));
+        $bus->dispatch(new AddLessonCommand($courseId, $sectionId, Uuid::v4(), $instructor->getId(), 'Lekcja', 'treść'));
+
+        // Submit the real (CSRF-protected) publish form from the manage page
+        $client->request('GET', '/instructor/courses/' . $courseId);
+        $client->submitForm('Opublikuj kurs');
+        self::assertResponseRedirects('/instructor/courses/' . $courseId);
+
+        // The course is now published (visible via the published-course query)
+        $course = self::getContainer()->get(QueryBusInterface::class)
+            ->ask(new FindPublishedCourseQuery($courseId));
+        self::assertInstanceOf(Course::class, $course);
     }
 }

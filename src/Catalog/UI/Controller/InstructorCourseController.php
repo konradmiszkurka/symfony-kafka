@@ -104,9 +104,15 @@ final class InstructorCourseController extends AbstractController
     }
 
     #[Route('/{id}/publish', name: 'instructor_course_publish', methods: ['POST'])]
-    public function publish(string $id, CommandBusInterface $commandBus, CourseRepository $courses): Response
+    public function publish(string $id, Request $request, CommandBusInterface $commandBus, CourseRepository $courses): Response
     {
         $this->ownedCourse($id, $courses);
+
+        if (!$this->isCsrfTokenValid('publish-'.$id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Nieprawidłowy token CSRF.');
+
+            return $this->redirectToRoute('instructor_course_manage', ['id' => $id]);
+        }
 
         try {
             $commandBus->dispatch(new PublishCourseCommand($this->uuid($id), $this->instructorId()));
