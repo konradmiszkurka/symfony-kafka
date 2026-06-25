@@ -54,7 +54,7 @@ services:
             $eventBus: '@event.bus'
 
     App\Shared\Application\Bus\EventBusInterface:
-        alias: App\Shared\Infrastructure\Bus\MessengerEventBus
+        alias: App\Shared\Infrastructure\Bus\OutboxEventBus
 
     App\Enrollment\Domain\EnrollmentRepository:
         alias: App\Enrollment\Infrastructure\Doctrine\DoctrineEnrollmentRepository

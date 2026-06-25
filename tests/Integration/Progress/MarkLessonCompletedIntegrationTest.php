@@ -17,8 +17,8 @@ use App\Progress\Domain\Event\CourseCompleted;
 use App\Progress\Domain\Event\LessonCompleted;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Application\Bus\QueryBusInterface;
+use App\Shared\Infrastructure\Outbox\OutboxRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Uid\Uuid;
 
 final class MarkLessonCompletedIntegrationTest extends KernelTestCase
@@ -47,10 +47,8 @@ final class MarkLessonCompletedIntegrationTest extends KernelTestCase
 
         $bus->dispatch(new MarkLessonCompletedCommand($userId, $courseId, $lessonId));
 
-        /** @var InMemoryTransport $progressTransport */
-        $progressTransport = self::getContainer()->get('messenger.transport.kafka_progress');
-        $messages = array_map(static fn ($e) => $e->getMessage(), $progressTransport->getSent());
-        $types = array_map('get_class', $messages);
+        $unsent = self::getContainer()->get(OutboxRepository::class)->unsent(100);
+        $types = array_map(static fn ($m) => $m->getMessageType(), $unsent);
         self::assertContains(LessonCompleted::class, $types);
         self::assertContains(CourseCompleted::class, $types);
     }

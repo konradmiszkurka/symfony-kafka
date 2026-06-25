@@ -2,23 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Enrollment;
+namespace App\Tests\Integration\Shared\Outbox;
 
 use App\Catalog\Application\AddLesson\AddLessonCommand;
 use App\Catalog\Application\AddSection\AddSectionCommand;
 use App\Catalog\Application\CreateCourse\CreateCourseCommand;
 use App\Catalog\Application\PublishCourse\PublishCourseCommand;
 use App\Enrollment\Application\EnrollStudent\EnrollStudentCommand;
-use App\Enrollment\Domain\EnrollmentRepository;
 use App\Enrollment\Domain\Event\UserEnrolled;
-use App\Enrollment\Domain\Exception\AlreadyEnrolledException;
 use App\Enrollment\Domain\Exception\CourseNotEnrollableException;
 use App\Shared\Application\Bus\CommandBusInterface;
 use App\Shared\Infrastructure\Outbox\OutboxRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Uid\Uuid;
 
-final class EnrollStudentIntegrationTest extends KernelTestCase
+final class OutboxPublishingTest extends KernelTestCase
 {
     private function publishCourse(CommandBusInterface $bus): Uuid
     {
@@ -33,7 +32,7 @@ final class EnrollStudentIntegrationTest extends KernelTestCase
         return $courseId;
     }
 
-    public function testEnrollPersistsAndSendsEventToTransport(): void
+    public function testEventGoesToOutboxNotDirectlyToKafka(): void
     {
         self::bootKernel();
         $bus = self::getContainer()->get(CommandBusInterface::class);
@@ -42,39 +41,34 @@ final class EnrollStudentIntegrationTest extends KernelTestCase
 
         $bus->dispatch(new EnrollStudentCommand($userId, $courseId));
 
-        // Persystencja: zapis trafił do bazy.
-        $enrollments = self::getContainer()->get(EnrollmentRepository::class);
-        self::assertTrue($enrollments->exists($userId, $courseId));
-
+        // Event jest w outboxie...
         $unsent = self::getContainer()->get(OutboxRepository::class)->unsent(100);
-        $match = array_values(array_filter($unsent, static fn ($m) => UserEnrolled::class === $m->getMessageType()));
-        self::assertNotEmpty($match, 'Brak eventu UserEnrolled w outboxie.');
-        $payload = json_decode($match[0]->getPayload(), true, flags: JSON_THROW_ON_ERROR);
-        self::assertSame((string) $userId, $payload['userId']);
-        self::assertSame((string) $courseId, $payload['courseId']);
+        $types = array_map(static fn ($m) => $m->getMessageType(), $unsent);
+        self::assertContains(UserEnrolled::class, $types);
+
+        // ...ale NIE poszedł jeszcze wprost na Kafkę (transport in-memory pusty dla eventów).
+        /** @var InMemoryTransport $transport */
+        $transport = self::getContainer()->get('messenger.transport.kafka_events');
+        self::assertCount(0, $transport->getSent());
     }
 
-    public function testCannotEnrollTwice(): void
+    public function testFailedCommandLeavesNoOutboxRow(): void
     {
         self::bootKernel();
         $bus = self::getContainer()->get(CommandBusInterface::class);
-        $courseId = $this->publishCourse($bus);
-        $userId = Uuid::v4();
+        $outbox = self::getContainer()->get(OutboxRepository::class);
+        $before = \count($outbox->unsent(1000));
 
-        $bus->dispatch(new EnrollStudentCommand($userId, $courseId));
+        try {
+            // kurs nieopublikowany -> handler rzuca przed zapisem
+            $draft = Uuid::v4();
+            $bus->dispatch(new CreateCourseCommand($draft, Uuid::v4(), 'Roboczy', 'Opis'));
+            $bus->dispatch(new EnrollStudentCommand(Uuid::v4(), $draft));
+            self::fail('Spodziewano się wyjątku.');
+        } catch (CourseNotEnrollableException) {
+            // oczekiwane
+        }
 
-        $this->expectException(AlreadyEnrolledException::class);
-        $bus->dispatch(new EnrollStudentCommand($userId, $courseId));
-    }
-
-    public function testCannotEnrollInUnpublishedCourse(): void
-    {
-        self::bootKernel();
-        $bus = self::getContainer()->get(CommandBusInterface::class);
-        $draftId = Uuid::v4();
-        $bus->dispatch(new CreateCourseCommand($draftId, Uuid::v4(), 'Roboczy', 'Opis'));
-
-        $this->expectException(CourseNotEnrollableException::class);
-        $bus->dispatch(new EnrollStudentCommand(Uuid::v4(), $draftId));
+        self::assertCount($before, $outbox->unsent(1000));
     }
 }

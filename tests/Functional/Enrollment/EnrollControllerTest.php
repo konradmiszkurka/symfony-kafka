@@ -12,8 +12,8 @@ use App\Identity\Application\RegisterUser\RegisterUserCommand;
 use App\Identity\Domain\Role;
 use App\Identity\Domain\UserRepository;
 use App\Shared\Application\Bus\CommandBusInterface;
+use App\Shared\Infrastructure\Outbox\OutboxRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Uid\Uuid;
 
 final class EnrollControllerTest extends WebTestCase
@@ -57,8 +57,8 @@ final class EnrollControllerTest extends WebTestCase
         $client->submitForm('Zapisz się');
         self::assertResponseRedirects('/courses/'.$courseId, 302);
 
-        /** @var InMemoryTransport $transport */
-        $transport = self::getContainer()->get('messenger.transport.kafka_events');
-        self::assertCount(1, $transport->getSent());
+        $unsent = self::getContainer()->get(OutboxRepository::class)->unsent(100);
+        $types = array_map(static fn ($m) => $m->getMessageType(), $unsent);
+        self::assertContains(\App\Enrollment\Domain\Event\UserEnrolled::class, $types);
     }
 }
